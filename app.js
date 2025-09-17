@@ -29,9 +29,10 @@ async function loadModel() {
 
 // Setup event listeners
 function setupEventListeners() {
-    const uploadBtn = document.getElementById('upload-btn');
-    const fileInput = document.getElementById('file-input');
-    const uploadArea = document.getElementById('upload-area');
+    const cameraBtn = document.getElementById('camera-btn');
+    const galleryBtn = document.getElementById('gallery-btn');
+    const cameraInput = document.getElementById('camera-input');
+    const galleryInput = document.getElementById('gallery-input');
     const scanBtn = document.getElementById('scan-btn');
     const newScanBtn = document.getElementById('new-scan');
     const saveResultBtn = document.getElementById('save-result');
@@ -39,23 +40,21 @@ function setupEventListeners() {
     const closeHistoryBtn = document.getElementById('close-history');
     const clearHistoryBtn = document.getElementById('clear-history');
 
-    // Upload button click
-    uploadBtn.addEventListener('click', () => {
-        fileInput.click();
+    // Camera button - opens camera
+    cameraBtn.addEventListener('click', () => {
+        cameraInput.click();
     });
 
-    // Upload area click
-    uploadArea.addEventListener('click', () => {
-        fileInput.click();
+    // Gallery button - opens gallery
+    galleryBtn.addEventListener('click', () => {
+        galleryInput.click();
     });
 
-    // File input change
-    fileInput.addEventListener('change', handleFileSelect);
+    // Camera input change
+    cameraInput.addEventListener('change', handleFileSelect);
 
-    // Drag and drop
-    uploadArea.addEventListener('dragover', handleDragOver);
-    uploadArea.addEventListener('drop', handleDrop);
-    uploadArea.addEventListener('dragleave', handleDragLeave);
+    // Gallery input change  
+    galleryInput.addEventListener('change', handleFileSelect);
 
     // Scan button
     scanBtn.addEventListener('click', scanImage);
@@ -82,6 +81,30 @@ function setupEventListeners() {
         }
     });
 }
+
+// Handle file selection (keep this function the same)
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        processImageFile(file);
+    }
+}
+
+// Update resetApp function to clear both inputs
+function resetApp() {
+    currentImage = null;
+    currentPredictions = [];
+    
+    document.getElementById('upload-area').style.display = 'block';
+    document.getElementById('preview-section').style.display = 'none';
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('camera-input').value = '';
+    document.getElementById('gallery-input').value = '';
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 
 // Handle file selection
 function handleFileSelect(event) {
