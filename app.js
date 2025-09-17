@@ -29,10 +29,9 @@ async function loadModel() {
 
 // Setup event listeners
 function setupEventListeners() {
-    const cameraBtn = document.getElementById('camera-btn');
-    const galleryBtn = document.getElementById('gallery-btn');
-    const cameraInput = document.getElementById('camera-input');
-    const galleryInput = document.getElementById('gallery-input');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('file-input');
+    const uploadArea = document.getElementById('upload-area');
     const scanBtn = document.getElementById('scan-btn');
     const newScanBtn = document.getElementById('new-scan');
     const saveResultBtn = document.getElementById('save-result');
@@ -40,64 +39,77 @@ function setupEventListeners() {
     const closeHistoryBtn = document.getElementById('close-history');
     const clearHistoryBtn = document.getElementById('clear-history');
 
-    // Check if elements exist before adding listeners
-    if (cameraBtn && cameraInput) {
-        cameraBtn.addEventListener('click', () => {
-            console.log('Camera button clicked');
-            cameraInput.click();
-        });
-        cameraInput.addEventListener('change', handleFileSelect);
-    }
+    // Upload button click
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
 
-    if (galleryBtn && galleryInput) {
-        galleryBtn.addEventListener('click', () => {
-            console.log('Gallery button clicked');
-            galleryInput.click();
-        });
-        galleryInput.addEventListener('change', handleFileSelect);
-    }
+    // Upload area click
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
 
-    if (scanBtn) {
-        scanBtn.addEventListener('click', scanImage);
-    }
+    // File input change
+    fileInput.addEventListener('change', handleFileSelect);
 
-    if (newScanBtn) {
-        newScanBtn.addEventListener('click', resetApp);
-    }
+    // Drag and drop
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('drop', handleDrop);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
 
-    if (saveResultBtn) {
-        saveResultBtn.addEventListener('click', saveCurrentResult);
-    }
+    // Scan button
+    scanBtn.addEventListener('click', scanImage);
 
-    if (historyBtn) {
-        historyBtn.addEventListener('click', showHistory);
-    }
+    // New scan button
+    newScanBtn.addEventListener('click', resetApp);
 
-    if (closeHistoryBtn) {
-        closeHistoryBtn.addEventListener('click', hideHistory);
-    }
+    // Save result button
+    saveResultBtn.addEventListener('click', saveCurrentResult);
 
-    if (clearHistoryBtn) {
-        clearHistoryBtn.addEventListener('click', clearHistory);
-    }
+    // History button
+    historyBtn.addEventListener('click', showHistory);
+
+    // Close history
+    closeHistoryBtn.addEventListener('click', hideHistory);
+
+    // Clear history
+    clearHistoryBtn.addEventListener('click', clearHistory);
 
     // Close modal when clicking outside
-    const historyModal = document.getElementById('history-modal');
-    if (historyModal) {
-        historyModal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideHistory();
-            }
-        });
-    }
+    document.getElementById('history-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideHistory();
+        }
+    });
 }
 
 // Handle file selection
 function handleFileSelect(event) {
-    console.log('File selected');
     const file = event.target.files[0];
     if (file) {
         processImageFile(file);
+    }
+}
+
+// Handle drag over
+function handleDragOver(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add('dragover');
+}
+
+// Handle drag leave
+function handleDragLeave(event) {
+    event.currentTarget.classList.remove('dragover');
+}
+
+// Handle drop
+function handleDrop(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('dragover');
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        processImageFile(files[0]);
     }
 }
 
@@ -122,17 +134,12 @@ function showImagePreview(imageSrc) {
     const previewImage = document.getElementById('preview-image');
     const uploadArea = document.getElementById('upload-area');
     
-    if (previewImage && previewSection && uploadArea) {
-        previewImage.src = imageSrc;
-        previewSection.style.display = 'block';
-        uploadArea.style.display = 'none';
-        
-        // Hide results section
-        const resultsSection = document.getElementById('results-section');
-        if (resultsSection) {
-            resultsSection.style.display = 'none';
-        }
-    }
+    previewImage.src = imageSrc;
+    previewSection.style.display = 'block';
+    uploadArea.style.display = 'none';
+    
+    // Hide results section
+    document.getElementById('results-section').style.display = 'none';
 }
 
 // Scan image
@@ -186,17 +193,13 @@ async function scanImage() {
 // Show loading
 function showLoading(show) {
     const loading = document.getElementById('loading');
-    if (loading) {
-        loading.style.display = show ? 'block' : 'none';
-    }
+    loading.style.display = show ? 'block' : 'none';
 }
 
 // Show results
 function showResults(predictions) {
     const resultsSection = document.getElementById('results-section');
     const predictionsContainer = document.getElementById('predictions');
-    
-    if (!resultsSection || !predictionsContainer) return;
     
     // Clear previous results
     predictionsContainer.innerHTML = '';
@@ -237,17 +240,10 @@ function resetApp() {
     currentImage = null;
     currentPredictions = [];
     
-    const uploadArea = document.getElementById('upload-area');
-    const previewSection = document.getElementById('preview-section');
-    const resultsSection = document.getElementById('results-section');
-    const cameraInput = document.getElementById('camera-input');
-    const galleryInput = document.getElementById('gallery-input');
-    
-    if (uploadArea) uploadArea.style.display = 'block';
-    if (previewSection) previewSection.style.display = 'none';
-    if (resultsSection) resultsSection.style.display = 'none';
-    if (cameraInput) cameraInput.value = '';
-    if (galleryInput) galleryInput.value = '';
+    document.getElementById('upload-area').style.display = 'block';
+    document.getElementById('preview-section').style.display = 'none';
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('file-input').value = '';
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -300,25 +296,19 @@ function getHistory() {
 // Show history modal
 function showHistory() {
     const modal = document.getElementById('history-modal');
-    if (modal) {
-        displayHistory();
-        modal.style.display = 'flex';
-    }
+    displayHistory();
+    modal.style.display = 'flex';
 }
 
 // Hide history modal
 function hideHistory() {
     const modal = document.getElementById('history-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    modal.style.display = 'none';
 }
 
 // Display history
 function displayHistory() {
     const historyList = document.getElementById('history-list');
-    if (!historyList) return;
-    
     const history = getHistory();
     
     if (history.length === 0) {
