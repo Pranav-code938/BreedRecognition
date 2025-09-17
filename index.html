@@ -3,527 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cattle & Buffalo Breed Identifier</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .content {
-            padding: 30px 20px;
-        }
-
-        .upload-section {
-            margin-bottom: 30px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #4ECDC4 0%, #26A69A 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        #imageInput, #cameraInput {
-            display: none;
-        }
-
-        .image-preview {
-            width: 100%;
-            max-width: 300px;
-            margin: 20px auto;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            display: none;
-        }
-
-        .image-preview img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .prediction-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            display: none;
-        }
-
-        .prediction-result {
-            text-align: center;
-        }
-
-        .prediction-breed {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2E7D32;
-            margin-bottom: 10px;
-        }
-
-        .prediction-confidence {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .confidence-bar {
-            background: #e0e0e0;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-            transition: width 0.3s ease;
-        }
-
-        .save-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #9C27B0 0%, #673AB7 100%);
-            color: white;
-        }
-
-        .history-section {
-            margin-top: 30px;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .history-header h3 {
-            color: #333;
-            font-size: 18px;
-        }
-
-        .clear-history {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .history-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-details {
-            flex: 1;
-        }
-
-        .history-breed {
-            font-weight: bold;
-            color: #2E7D32;
-            margin-bottom: 5px;
-        }
-
-        .history-date {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .history-confidence {
-            font-size: 14px;
-            color: #666;
-            text-align: right;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4CAF50;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .no-history {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 20px;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-        }
-    </style>
+    <title>Cattle Breed Scanner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🐄 Breed Identifier</h1>
-            <p>AI-powered cattle & buffalo breed detection for BPA</p>
-        </div>
+        <!-- Header -->
+        <header class="header">
+            <h1 class="app-title">Cattle Breed Scanner</h1>
+            <p class="app-subtitle">AI-powered breed identification for Bharat Pashudhan App</p>
+            <p class="app-description">Helps Field Level Workers (FLWs) accurately identify cattle and buffalo breeds</p>
+        </header>
 
-        <div class="content">
-            <div class="upload-section">
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="openCamera()">
-                        📷 Take Photo
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Initial State - Camera/Upload Options -->
+            <div id="initial-state" class="section">
+                <div class="action-buttons">
+                    <button id="take-photo-btn" class="btn btn--primary action-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                        Take Photo
                     </button>
-                    <button class="btn btn-secondary" onclick="openGallery()">
-                        🖼️ Upload Image
+                    
+                    <button id="upload-btn" class="btn btn--secondary action-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7,10 12,15 17,10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Upload Image
                     </button>
                 </div>
-                
-                <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
-                <input type="file" id="cameraInput" accept="image/*" capture="camera" onchange="handleImageUpload(event)">
-                
-                <div class="image-preview" id="imagePreview">
-                    <img id="previewImg" alt="Selected image">
+
+                <button id="view-history-btn" class="btn btn--outline history-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12,6 12,12 16,14"></polyline>
+                    </svg>
+                    View History
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="section hidden">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Analyzing image...</p>
                 </div>
             </div>
 
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing image...</p>
-            </div>
-
-            <div class="prediction-section" id="predictionSection">
-                <div class="prediction-result">
-                    <div class="prediction-breed" id="breedName"></div>
-                    <div class="prediction-confidence" id="confidenceText"></div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" id="confidenceFill"></div>
+            <!-- Results State -->
+            <div id="results-state" class="section hidden">
+                <div class="result-card card">
+                    <div class="card__body">
+                        <div class="image-preview">
+                            <img id="preview-image" src="" alt="Analyzed animal" />
+                        </div>
+                        
+                        <div class="result-content">
+                            <h3 class="result-title">Breed Identified:</h3>
+                            <div class="breed-result">
+                                <span id="breed-name" class="breed-name"></span>
+                                <span id="confidence" class="confidence"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button id="save-result-btn" class="btn btn--primary">Save to History</button>
+                            <button id="analyze-another-btn" class="btn btn--secondary">Analyze Another</button>
+                        </div>
                     </div>
-                    <button class="btn save-btn" onclick="saveToHistory()">
-                        💾 Save to History
-                    </button>
                 </div>
             </div>
 
-            <div class="history-section">
+            <!-- History State -->
+            <div id="history-state" class="section hidden">
                 <div class="history-header">
-                    <h3>📋 History</h3>
-                    <button class="clear-history" onclick="clearHistory()">Clear All</button>
+                    <h2>Scan History</h2>
+                    <button id="back-to-main-btn" class="btn btn--outline">Back</button>
                 </div>
-                <div class="history-list" id="historyList">
-                    <div class="no-history">No predictions saved yet</div>
+                
+                <div id="history-list" class="history-list">
+                    <div class="empty-history">
+                        <p>No scan history yet. Start by taking a photo or uploading an image!</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+
+        <!-- Hidden file inputs -->
+        <input type="file" id="file-input" accept="image/*" capture="environment" style="display: none;">
+        <input type="file" id="gallery-input" accept="image/*" style="display: none;">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-    <script>
-        const URL = "https://teachablemachine.withgoogle.com/models/7AHQ0KxaX/";
-        let model;
-        let currentPrediction = null;
-
-        // Load the model when page loads
-        async function loadModel() {
-            try {
-                const modelURL = URL + "model.json";
-                const metadataURL = URL + "metadata.json";
-                model = await tmImage.load(modelURL, metadataURL);
-                console.log("Model loaded successfully");
-            } catch (error) {
-                console.error("Error loading model:", error);
-                alert("Error loading AI model. Please check your internet connection.");
-            }
-        }
-
-        // Initialize model loading
-        loadModel();
-
-        function openCamera() {
-            document.getElementById('cameraInput').click();
-        }
-
-        function openGallery() {
-            document.getElementById('imageInput').click();
-        }
-
-        async function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Show image preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('previewImg');
-                img.src = e.target.result;
-                document.getElementById('imagePreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('predictionSection').style.display = 'none';
-
-            // Wait for model to load if not already loaded
-            if (!model) {
-                await loadModel();
-            }
-
-            if (!model) {
-                document.getElementById('loading').style.display = 'none';
-                alert("Model not loaded. Please try again.");
-                return;
-            }
-
-            try {
-                // Create image element for prediction
-                const img = new Image();
-                img.onload = async function() {
-                    const prediction = await model.predict(img);
-                    
-                    // Find the prediction with highest probability
-                    let topPrediction = prediction[0];
-                    for (let i = 1; i < prediction.length; i++) {
-                        if (prediction[i].probability > topPrediction.probability) {
-                            topPrediction = prediction[i];
-                        }
-                    }
-
-                    // Store current prediction
-                    currentPrediction = {
-                        breed: topPrediction.className,
-                        confidence: topPrediction.probability,
-                        timestamp: new Date().toISOString(),
-                        imageData: document.getElementById('previewImg').src
-                    };
-
-                    // Display result
-                    displayPrediction(topPrediction);
-                    
-                    // Hide loading
-                    document.getElementById('loading').style.display = 'none';
-                };
-                
-                img.onerror = function() {
-                    document.getElementById('loading').style.display = 'none';
-                    alert("Error loading image. Please try another image.");
-                };
-                
-                img.src = document.getElementById('previewImg').src;
-                
-            } catch (error) {
-                console.error("Prediction error:", error);
-                document.getElementById('loading').style.display = 'none';
-                alert("Error analyzing image. Please try again.");
-            }
-        }
-
-        function displayPrediction(prediction) {
-            const breedName = document.getElementById('breedName');
-            const confidenceText = document.getElementById('confidenceText');
-            const confidenceFill = document.getElementById('confidenceFill');
-            const predictionSection = document.getElementById('predictionSection');
-
-            const confidence = Math.round(prediction.probability * 100);
-            
-            breedName.textContent = prediction.className;
-            confidenceText.textContent = `Confidence: ${confidence}%`;
-            confidenceFill.style.width = `${confidence}%`;
-            
-            // Change color based on confidence level
-            if (confidence >= 80) {
-                confidenceFill.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)';
-            } else if (confidence >= 60) {
-                confidenceFill.style.background = 'linear-gradient(90deg, #FF9800 0%, #FFC107 100%)';
-            } else {
-                confidenceFill.style.background = 'linear-gradient(90deg, #f44336 0%, #FF5722 100%)';
-            }
-
-            predictionSection.style.display = 'block';
-        }
-
-        function saveToHistory() {
-            if (!currentPrediction) return;
-
-            let history = JSON.parse(localStorage.getItem('breedHistory') || '[]');
-            history.unshift(currentPrediction); // Add to beginning of array
-            
-            // Keep only last 50 predictions
-            if (history.length > 50) {
-                history = history.slice(0, 50);
-            }
-            
-            localStorage.setItem('breedHistory', JSON.stringify(history));
-            loadHistory();
-            
-            // Show success message
-            const saveBtn = event.target;
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = '✅ Saved!';
-            saveBtn.disabled = true;
-            
-            setTimeout(() => {
-                saveBtn.textContent = originalText;
-                saveBtn.disabled = false;
-            }, 2000);
-        }
-
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('breedHistory') || '[]');
-            const historyList = document.getElementById('historyList');
-            
-            if (history.length === 0) {
-                historyList.innerHTML = '<div class="no-history">No predictions saved yet</div>';
-                return;
-            }
-
-            historyList.innerHTML = history.map(item => {
-                const date = new Date(item.timestamp).toLocaleDateString();
-                const time = new Date(item.timestamp).toLocaleTimeString();
-                const confidence = Math.round(item.confidence * 100);
-                
-                return `
-                    <div class="history-item">
-                        <div class="history-details">
-                            <div class="history-breed">${item.breed}</div>
-                            <div class="history-date">${date} ${time}</div>
-                        </div>
-                        <div class="history-confidence">${confidence}%</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function clearHistory() {
-            if (confirm('Are you sure you want to clear all history?')) {
-                localStorage.removeItem('breedHistory');
-                loadHistory();
-            }
-        }
-
-        // Load history on page load
-        window.addEventListener('load', loadHistory);
-
-        // Handle file input reset
-        document.getElementById('imageInput').addEventListener('change', function() {
-            this.value = '';
-        });
-        
-        document.getElementById('cameraInput').addEventListener('change', function() {
-            this.value = '';
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
