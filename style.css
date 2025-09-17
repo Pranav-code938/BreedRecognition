@@ -380,3 +380,73 @@ body {
     position: relative;
     width: 100%;
 }
+
+/* Upload Buttons */
+.upload-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.btn-camera, .btn-gallery {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn-camera {
+    background: linear-gradient(45deg, #32CD32, #228B22);
+    color: white;
+}
+
+.btn-camera:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+}
+
+.btn-gallery {
+    background: linear-gradient(45deg, #4A90E2, #357ABD);
+    color: white;
+}
+
+.btn-gallery:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+/* Mobile optimizations for upload buttons */
+@media (max-width: 768px) {
+    .upload-buttons {
+        gap: 12px;
+    }
+    
+    .btn-camera, .btn-gallery {
+        padding: 18px 20px;
+        font-size: 18px;
+        border-radius: 15px;
+    }
+    
+    .upload-content p {
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+    
+    .upload-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Active button states for better mobile feedback */
+.btn-camera:active, .btn-gallery:active {
+    transform: scale(0.98);
+}
